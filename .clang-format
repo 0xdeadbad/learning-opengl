@@ -1,0 +1,11 @@
+UseTab: Never
+IndentWidth: 4
+BreakBeforeBraces: Allman
+BraceWrapping:
+    AfterEnum: true
+    AfterStruct: false
+    SplitEmptyFunction: false
+AllowShortIfStatementsOnASingleLine: true
+IndentCaseLabels: false
+ColumnLimit: 0
+BreakAfterReturnType: None

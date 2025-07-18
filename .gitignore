@@ -1,0 +1,6 @@
+.cache
+compile_commands.json
+glad-gen.sh
+test.out
+*.o
+lib/lib*.a
