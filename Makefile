@@ -7,7 +7,7 @@
 CC := gcc
 AR := ar
 
-INCPATHS := include
+INCPATHS := include lib/flecs/distr
 CFLAGS := 	-g \
 			-O2 \
 			-Wall \
@@ -15,10 +15,10 @@ CFLAGS := 	-g \
 			-pedantic $(foreach dir,$(INCPATHS),-I$(dir))
 LDFLAGS := 	-L./lib \
 			-lm \
-			-lflecs \
 			-lenet \
             -lglfw
 SRCS := src/gl.c \
+        lib/flecs/distr/flecs.c \
 		src/util.c \
 		src/main.c
 OBJS := $(SRCS:.c=.o)
@@ -37,11 +37,11 @@ LIBENET_SRCS := lib/enet/callbacks.c \
 LIBENET_OBJS := $(LIBENET_SRCS:.c=.o)
 LIBENET_BIN := lib/libenet.a
 
-LIBSFLECS_INCPATHS := lib/flecs/distr
-LIBSFLECS_CFLAGS := $(CFLAGS) $(foreach dir,$(LIBFLECS_INCPATHS),-I$(dir))
-LIBSFLECS_LDFLAGS :=
-LIBSFLECS_SRCS := lib/flecs/distr/flecs.c
-LIBSFLECS_OBJS := $(LIBSFLECS_SRCS)
+LIBFLECS_INCPATHS := lib/flecs/distr
+LIBFLECS_CFLAGS := $(CFLAGS)
+LIBFLECS_LDFLAGS :=
+LIBFLECS_SRCS := lib/flecs/distr/flecs.c
+LIBFLECS_OBJS := $(LIBFLECS_SRCS:.c=.o)
 LIBFLECS_BIN := lib/libflecs.a
 
 ifeq '$(findstring ;,$(PATH))' ';'
@@ -90,18 +90,18 @@ endif
 
 all: $(BIN)
 
-$(BIN): $(LIBENET_BIN) $(LIBFLECS_BIN) $(OBJS)
+$(BIN): $(LIBENET_BIN) $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^
 src/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(foreach dir,$(LIBENET_INCPATHS),-I$(dir)) -c $< -o $@
 
 $(LIBENET_BIN): $(LIBENET_OBJS)
 	$(AR) rcs $@ $^
 lib/enet/%.o: lib/enet/%.c
 	$(CC) $(LIBENET_CFLAGS) -c $< -o $@
 
-$(LIBFLECS_BIN): $(LIBFLECS_OBJS)
-	$(AR) rcs $@ $^
+# $(LIBFLECS_BIN): $(LIBFLECS_OBJS)
+# 	$(AR) rcs $@ $^
 lib/flecs/distr/%.o: lib/flecs/distr/%.c
 	$(CC) $(LIBFLECS_CFLAGS) -c $< -o $@
 
@@ -113,7 +113,7 @@ clean: clean_libenet clean_libflecs
 clean_libenet:
 	rm -f $(LIBENET_BIN) $(LIBENET_OBJS)
 
-clean_libflecs:
-	rm -f $(LIBFLECS_BIN) $(LIBFLECS_OBJS)
+# clean_libflecs:
+# 	rm -f $(LIBFLECS_BIN) $(LIBFLECS_OBJS)
 
 # end

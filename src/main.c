@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glad/gl.h>
 
+#include "flecs.h"
 #include "linmath.h"
 
 #include <stdio.h>
@@ -19,6 +20,23 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+typedef struct
+{
+    float x, y;
+} Position, Velocity;
+
+void Move(ecs_iter_t *it)
+{
+    Position *p = ecs_field(it, Position, 0);
+    Velocity *v = ecs_field(it, Velocity, 1);
+
+    for (int i = 0; i < it->count; i++)
+    {
+        p[i].x += v[i].x;
+        p[i].y += v[i].y;
+    }
 }
 
 int main(void)
