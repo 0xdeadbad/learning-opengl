@@ -17,7 +17,7 @@ LDFLAGS := 	-L./lib \
 			-lm \
 			-lflecs \
 			-lenet \
-			-lglfw
+            -lglfw
 SRCS := src/gl.c \
 		src/util.c \
 		src/main.c
@@ -54,7 +54,7 @@ else
 endif
 ifeq ($(detected_OS),Windows)
     CFLAGS += -D WIN32
-    LD_FLAGS += -lws3_32 -lwinmm
+    LD_FLAGS = -L./lib/glfw/mingw64 -lws3_32 -lwinmm $(LDFLAGS)
     LIBENET_SRCS += lib/enet/win32.c
 endif
 ifeq ($(detected_OS),Linux)
