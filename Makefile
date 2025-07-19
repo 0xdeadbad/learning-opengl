@@ -14,9 +14,7 @@ CFLAGS := 	-g \
 			-Wextra \
 			-pedantic $(foreach dir,$(INCPATHS),-I$(dir))
 LDFLAGS := 	-L./lib \
-			-lm \
-			-lenet \
-            -lglfw
+			-lm
 SRCS := src/gl.c \
         lib/flecs/distr/flecs.c \
 		src/util.c \
@@ -44,6 +42,7 @@ LIBFLECS_SRCS := lib/flecs/distr/flecs.c
 LIBFLECS_OBJS := $(LIBFLECS_SRCS:.c=.o)
 LIBFLECS_BIN := lib/libflecs.a
 
+use_windows_flags := 0
 ifeq '$(findstring ;,$(PATH))' ';'
 	detected_OS := Windows
 else
@@ -53,9 +52,13 @@ else
 	detected_OS := $(patsubst MINGW%,MSYS,$(detected_OS))
 endif
 ifeq ($(detected_OS),Windows)
-    CFLAGS += -D WIN32
-    LDFLAGS := -L./lib/glfw/mingw64 -lws3_32 -lwinmm $(patsubst "-lglfw","-lglfw3",$(LDFLAGS))
-    LIBENET_SRCS += lib/enet/win32.c
+	use_windows_flags = 1
+endif
+ifeq ($(detected_OS),Cygwin)
+	use_windows_flags = 1
+endif
+ifeq ($(detected_OS),MSYS)
+	use_windows_flags = 1
 endif
 ifeq ($(detected_OS),Linux)
     CFLAGS += -D LINUX
@@ -87,6 +90,21 @@ endif
 # ifeq ($(detected_OS),GNU/kFreeBSD)  # Debian kFreeBSD
 #     CFLAGS   +=   -D GNU_kFreeBSD
 # endif
+
+ifeq ($(use_windows_flags),1)
+	CFLAGS 			+= -D WIN32
+    LIBENET_SRCS 	+= lib/enet/win32.c
+	LDFLAGS 		+= 	-L./lib/glfw/mingw64 \
+						-lws2_32 \
+						-lwinmm \
+						-lgdi32 \
+						-lenet \
+						-lglfw3
+else
+	CFLAGS 			+= -D POSIX
+	LDFLAGS 		+= 	-lenet \
+						-lglfw
+endif
 
 all: $(BIN)
 
