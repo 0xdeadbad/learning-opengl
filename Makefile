@@ -54,7 +54,7 @@ else
 endif
 ifeq ($(detected_OS),Windows)
     CFLAGS += -D WIN32
-    LDFLAGS = -L./lib/glfw/mingw64 -lws3_32 -lwinmm $(LDFLAGS)
+    LDFLAGS = -L./lib/glfw/mingw64 -lws3_32 -lwinmm $(patsubst "-lglfw","-lglfw3",$(LDFLAGS))
     LIBENET_SRCS += lib/enet/win32.c
 endif
 ifeq ($(detected_OS),Linux)
