@@ -13,8 +13,7 @@ CFLAGS := 	-g \
 			-Wall \
 			-Wextra \
 			-pedantic $(foreach dir,$(INCPATHS),-I$(dir))
-LDFLAGS := 	-L./lib \
-			-lm
+LDFLAGS := 	-L./lib
 SRCS := src/gl.c \
         lib/flecs/distr/flecs.c \
 		src/util.c \
