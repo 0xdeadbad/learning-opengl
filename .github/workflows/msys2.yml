@@ -5,7 +5,8 @@ jobs:
   make-all:
     strategy:
       matrix:
-        sys: [ CLANG64 ]
+        include:
+          - { sys: clang64, env: clang-x86_64 }
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
