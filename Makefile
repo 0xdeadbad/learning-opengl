@@ -85,6 +85,7 @@ ifeq ($(detected_OS),Darwin)        # Mac OS X
 	LIBENET_SRCS += lib/enet/unix.c
 endif
 
+
 ifeq ($(use_windows_flags),1)
 	CFLAGS 			+=  -D WIN32
     LIBENET_SRCS 	+=  lib/enet/win32.c
