@@ -13,7 +13,8 @@ CFLAGS := 	-g \
 			-Wall \
 			-Wextra \
 			-pedantic $(foreach dir,$(INCPATHS),-I$(dir))
-LDFLAGS := 	-L./lib
+LDFLAGS := 	-L./lib \
+            -lm
 SRCS := src/gl.c \
         lib/flecs/distr/flecs.c \
 		src/util.c \
@@ -91,23 +92,19 @@ endif
 # endif
 
 ifeq ($(use_windows_flags),1)
-	CFLAGS 			+= -D WIN32
-    LIBENET_SRCS 	+= lib/enet/win32.c
+	CFLAGS 			+=  -D WIN32
+    LIBENET_SRCS 	+=  lib/enet/win32.c
+    OBJS            +=  lib/glfw/mingw64/libglfw3.a
 	LDFLAGS 		+= 	-L./lib/glfw/mingw64 \
-						-lws2_32 \
-						-lwinmm \
-						-lgdi32 \
-						-lenet \
-						-lglfw3
+						-lgdi32
 else
-	CFLAGS 			+= -D POSIX
-	LDFLAGS 		+= 	-lenet \
-						-lglfw
+    LDFLAGS += -lglfw
+	CFLAGS 	+= -D POSIX
 endif
 
 all: $(BIN)
 
-$(BIN): $(LIBENET_BIN) $(OBJS)
+$(BIN): $(OBJS) $(LIBENET_BIN) $(LIBFLECS_BIN)
 	$(CC) $(LDFLAGS) -o $@ $^
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) $(foreach dir,$(LIBENET_INCPATHS),-I$(dir)) -c $< -o $@
@@ -117,8 +114,8 @@ $(LIBENET_BIN): $(LIBENET_OBJS)
 lib/enet/%.o: lib/enet/%.c
 	$(CC) $(LIBENET_CFLAGS) -c $< -o $@
 
-# $(LIBFLECS_BIN): $(LIBFLECS_OBJS)
-# 	$(AR) rcs $@ $^
+$(LIBFLECS_BIN): $(LIBFLECS_OBJS)
+	$(AR) rcs $@ $^
 lib/flecs/distr/%.o: lib/flecs/distr/%.c
 	$(CC) $(LIBFLECS_CFLAGS) -c $< -o $@
 
@@ -130,7 +127,7 @@ clean: clean_libenet clean_libflecs
 clean_libenet:
 	rm -f $(LIBENET_BIN) $(LIBENET_OBJS)
 
-# clean_libflecs:
-# 	rm -f $(LIBFLECS_BIN) $(LIBFLECS_OBJS)
+clean_libflecs:
+	rm -f $(LIBFLECS_BIN) $(LIBFLECS_OBJS)
 
 # end
