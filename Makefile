@@ -94,8 +94,11 @@ endif
 ifeq ($(use_windows_flags),1)
 	CFLAGS 			+=  -D WIN32
     LIBENET_SRCS 	+=  lib/enet/win32.c
+    LIBENET_CFLAGS  +=
     OBJS            +=  lib/glfw/mingw64/libglfw3.a
 	LDFLAGS 		+= 	-L./lib/glfw/mingw64 \
+                        -lws2_32 \
+                        -lwinmm \
 						-lgdi32
 else
     LDFLAGS += -lglfw
