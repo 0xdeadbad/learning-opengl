@@ -19,4 +19,4 @@ jobs:
           #   curl
       - name: Run make
         run: |
-          make CC=${{matrix.sys} == "mingw64" && gcc || clang} -j
+          make CC=${matrix.sys == "mingw64" && gcc || clang} -j
