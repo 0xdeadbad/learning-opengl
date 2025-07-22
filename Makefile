@@ -60,6 +60,9 @@ endif
 ifeq ($(detected_OS),MSYS)
 	use_windows_flags = 1
 endif
+ifeq ($(detected_OS),MINGW)
+	use_windows_flags = 1
+endif
 ifeq ($(detected_OS),Linux)
     CFLAGS += -D LINUX
     LIBENET_SRCS += lib/enet/unix.c
@@ -93,16 +96,16 @@ ifeq ($(use_windows_flags),1)
 	LDFLAGS 		+=  -lws2_32 \
                         -lwinmm \
 						-lgdi32
-    LIBGLFW3_BIN    := lib/glfw/mingw64/libglfw3.a
+    LIBGLFW3_BIN    :=  lib/glfw/mingw64/libglfw3.a
 else
 	CFLAGS          += -D POSIX
-    LIBGLFW3_BIN    := lib/glfw/linux_amd64/libglfw.a
+    LIBGLFW3_BIN    := lib/glfw/linux_amd64/libglfw3.a
 endif
 
 all: $(BIN)
 
 $(BIN): $(OBJS) $(LIBENET_BIN) $(LIBFLECS_BIN)
-	$(CC) -o $@ $^ lib/glfw/linux_amd64/libglfw3.a $(LDFLAGS)
+	$(CC) -o $@ $^ $(LIBGLFW3_BIN) $(LDFLAGS)
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) $(foreach dir,$(LIBENET_INCPATHS),-I$(dir)) -c $< -o $@
 
