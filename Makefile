@@ -105,7 +105,7 @@ endif
 all: $(BIN)
 
 $(BIN): $(OBJS) $(LIBENET_BIN) $(LIBFLECS_BIN)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) -o $@ $^ $(LDFLAGS)
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) $(foreach dir,$(LIBENET_INCPATHS),-I$(dir)) -c $< -o $@
 
