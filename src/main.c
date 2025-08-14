@@ -16,10 +16,15 @@ void error_callback(int error, const char *description)
     fprintf(stderr, "Error (%d): %s\n", error, description);
 }
 
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+static void key_callback(GLFWwindow *window, int key, int _scancode, int action, int _mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+void framebuffer_size_callback(GLFWwindow *_window, int width, int height)
+{
+    glViewport(0, 0, width, height);
 }
 
 typedef struct
@@ -64,6 +69,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetKeyCallback(window, key_callback);
 
     glfwMakeContextCurrent(window);
