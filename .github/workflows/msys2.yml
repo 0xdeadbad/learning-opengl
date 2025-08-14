@@ -19,4 +19,4 @@ jobs:
           #   curl
       - name: Run make
         run: |
-          make CC='cc'
+          make
