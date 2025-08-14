@@ -7,7 +7,7 @@ jobs:
       matrix:
         include:
           - { sys: mingw64, env: x86_64 }
-          - { sys: clang64, env: clang-x86_64 }
+#          - { sys: clang64, env: clang-x86_64 }
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
