@@ -182,6 +182,11 @@ int main(void)
         glfwPollEvents();
     }
 
+    glDeleteVertexArrays(1, &vertex_array_object);
+    glDeleteBuffers(1, &vertex_buffer);
+    glDeleteBuffers(1, &element_buffer_objects);
+    glDeleteProgram(shader_program);
+
     glfwDestroyWindow(window);
     glfwTerminate();
 
