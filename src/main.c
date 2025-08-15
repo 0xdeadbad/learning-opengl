@@ -44,10 +44,26 @@ void Move(ecs_iter_t *it)
     }
 }
 
+// Triangle vertices
+/* float vertices[] = { */
+/*     -0.5f, -0.5f, 0.0f, */
+/*     0.5f, -0.5f, 0.0f, */
+/*     0.0f, 0.5f, 0.0f}; */
+
+// Square vertices (two triangles)
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f};
+    0.5f, 0.5f, 0.0f,   // top right
+    0.5f, -0.5f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f, // bottom left
+    -0.5f, 0.5f, 0.0f   // top left
+};
+
+// Square indices (two triangles)
+unsigned int indices[] = {
+    // note that we start from 0!
+    0, 1, 3, // first triangle
+    1, 2, 3  // second triangle
+};
 
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
@@ -66,7 +82,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
 int main(void)
 {
     GLFWwindow *window;
-    GLuint vertex_buffer, vertex_shader, fragment_shader, vertex_array_object, shader_program;
+    GLuint vertex_buffer, vertex_shader, fragment_shader, vertex_array_object, element_buffer_objects, shader_program;
 
     glfwSetErrorCallback(error_callback);
 
@@ -98,12 +114,22 @@ int main(void)
     // NOTE: OpenGL error checks have been omitted for brevity
 
     glGenVertexArrays(1, &vertex_array_object);
+    glGenBuffers(1, &vertex_buffer);
+    glGenBuffers(1, &element_buffer_objects);
 
     glBindVertexArray(vertex_array_object);
 
-    glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_objects);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, &vertexShaderSource, NULL);
@@ -140,9 +166,6 @@ int main(void)
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -150,7 +173,10 @@ int main(void)
 
         glUseProgram(shader_program);
         glBindVertexArray(vertex_array_object);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        /* glDrawArrays(GL_TRIANGLES, 0, 3); */
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
