@@ -123,8 +123,6 @@ int main(void)
     glShaderSource(fragment_shader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragment_shader);
 
-    // TODO: Add error checking for fragment shader compilation
-
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
@@ -138,8 +136,6 @@ int main(void)
     glAttachShader(shader_program, vertex_shader);
     glAttachShader(shader_program, fragment_shader);
     glLinkProgram(shader_program);
-
-    // TODO: Add error checking for shader program linking
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
